@@ -1,0 +1,39 @@
+📁 telegram-bot-admin/           # <- GŁÓWNY FOLDER PROJEKTU
+├── 📄 index.php                 # ✅ Strona główna/testowa
+├── 📄 database.sqlite            # ✅ Baza danych SQLite (utworzona)
+│
+├── 📁 api/                       # ✅ PHP API endpoints
+│   ├── 📄 .htaccess             # ✅ Apache rewrite rules  
+│   ├── 📄 index.php             # ✅ Router API
+│   ├── 📄 login.php             # ✅ Logowanie
+│   ├── 📄 users.php             # ✅ Zarządzanie użytkownikami
+│   ├── 📄 stats.php             # ✅ Statystyki dashboard
+│   ├── 📄 access-requests.php   # ✅ Żądania dostępu
+│   ├── 📄 applications.php      # ✅ Aplikacje
+│   ├── 📄 orders.php            # ✅ Zamówienia
+│   ├── 📄 issues.php            # ✅ Zgłoszenia
+│   ├── 📄 files.php             # ✅ **Zarządzanie plikami (Phase 3)**
+│   ├── 📄 advanced-stats.php    # ✅ **Zaawansowane statystyki (Phase 3)**
+│   ├── 📄 backup-*.php          # ✅ **System backupów (Phase 3)**
+│   ├── 📄 activity-logs.php     # ✅ **Logi aktywności (Phase 3)**
+│   └── 📄 payment-methods.php   # ✅ Metody płatności
+│
+├── 📁 config/                   # ✅ Konfiguracja
+│   ├── 📄 database.php          # ✅ Połączenie z bazą
+│   └── 📄 settings.php          # ✅ Ustawienia globalne
+│
+├── 📁 includes/                 # ✅ Pomocnicze pliki
+│   ├── 📄 jwt.php               # ✅ Autoryzacja JWT
+│   ├── 📄 auth.php              # ✅ Middleware autoryzacji
+│   └── 📄 functions.php         # ✅ Funkcje pomocnicze
+│
+├── 📁 admin/                    # ✅ Frontend panelu (HTML/CSS/JS)
+│   ├── 📄 index.html            # ✅ Strona logowania
+│   ├── 📄 dashboard.html        # ✅ Dashboard z wszystkimi funkcjami
+│   ├── 📁 assets/
+│   │   ├── 📄 style.css         # ✅ Style CSS (profesjonalne)
+│   │   └── 📄 app.js            # ✅ JavaScript (z Phase 3 funkcjami)
+│   └── 📁 templates/            # ✅ Szablony HTML
+│
+└── 📁 sql/                      # ✅ Pliki SQL
+    └── 📄 create_tables.sql     # ✅ Struktura bazy danych

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Telegram Bot Admin Panel</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>🤖 Admin Panel</h2>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item active" onclick="showSection('dashboard')">
+                    📊 Dashboard
+                </li>
+                <li class="nav-item" onclick="showSection('users')">
+                    👥 Użytkownicy
+                </li>
+                <li class="nav-item" onclick="showSection('access-requests')">
+                    ✋ Żądania dostępu
+                </li>
+                <li class="nav-item" onclick="showSection('applications')">
+                    📱 Aplikacje
+                </li>
+                <li class="nav-item" onclick="showSection('orders')">
+                    🛒 Zamówienia
+                </li>
+                <li class="nav-item" onclick="showSection('files')">
+                    📄 Pliki
+                </li>
+                <li class="nav-item" onclick="showSection('issues')">
+                    🎫 Zgłoszenia
+                </li>
+                <li class="nav-item" onclick="showSection('analytics')">
+                    📈 Analityka
+                </li>
+                <li class="nav-item" onclick="showSection('backups')">
+                    💾 Kopie zapasowe
+                </li>
+                <li class="nav-item" onclick="showSection('activity')">
+                    📝 Logi aktywności
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary" onclick="refreshData()">🔄 Odśwież</button>
+                <button class="btn btn-danger" onclick="logout()">🚪 Wyloguj</button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="section">
+                <div class="section-header">
+                    <h1>📊 Dashboard</h1>
+                    <p>Przegląd systemu zarządzania Telegram Bot</p>
+                </div>
+                
+                <div id="statsGrid" class="stats-grid">
+                    <!-- Dashboard stats will be populated here -->
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <h1>👥 Zarządzanie użytkownikami</h1>
+                    <div class="section-actions">
+                        <input type="text" placeholder="Szukaj użytkowników..." onkeyup="filterTable('usersTable', this.value)">
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="usersTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Telegram ID</th>
+                                <th>Użytkownik</th>
+                                <th>Status</th>
+                                <th>Rola</th>
+                                <th>Data rejestracji</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Users will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Access Requests Section -->
+            <section id="access-requests-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <h1>✋ Żądania dostępu</h1>
+                    <div class="section-actions">
+                        <input type="text" placeholder="Szukaj żądań..." onkeyup="filterTable('accessRequestsTable', this.value)">
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="accessRequestsTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Telegram ID</th>
+                                <th>Użytkownik</th>
+                                <th>Wiadomość</th>
+                                <th>Status</th>
+                                <th>Data żądania</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Access requests will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Applications Section -->
+            <section id="applications-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <h1>📱 Zarządzanie aplikacjami</h1>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="showAddApplicationModal()">➕ Dodaj aplikację</button>
+                    </div>
+                </div>
+                
+                <div id="applicationsGrid" class="applications-grid">
+                    <!-- Applications will be populated here -->
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="orders-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <h1>🛒 Zarządzanie zamówieniami</h1>
+                    <div class="section-actions">
+                        <select id="orderStatusFilter" onchange="filterOrders()">
+                            <option value="all">Wszystkie</option>
+                            <option value="oczekujące">Oczekujące</option>
+                            <option value="przetwarzane">Przetwarzane</option>
+                            <option value="zakończone">Zakończone</option>
+                            <option value="anulowane">Anulowane</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="showAddOrderModal()">➕ Dodaj zamówienie</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="ordersTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Użytkownik</th>
+                                <th>Aplikacja</th>
+                                <th>Status</th>
+                                <th>Data zamówienia</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Orders will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Files Section -->
+            <section id="files-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <h1>📄 Zarządzanie plikami</h1>
+                    <div class="section-actions">
+                        <input type="text" placeholder="Szukaj plików..." onkeyup="filterTable('filesTable', this.value)">
+                        <button class="btn btn-primary" onclick="showAddFileModal()">➕ Dodaj plik</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="filesTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nazwa pliku</th>
+                                <th>Aplikacja</th>
+                                <th>Kod</th>
+                                <th>Typ</th>
+                                <th>Użytkownik</th>
+                                <th>Status</th>
+                                <th>Data utworzenia</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Files will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Issues Section -->
+            <section id="issues-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <h1>🎫 Zarządzanie zgłoszeniami</h1>
+                    <div class="section-actions">
+                        <input type="text" placeholder="Szukaj zgłoszeń..." onkeyup="filterTable('issuesTable', this.value)">
+                        <button class="btn btn-primary" onclick="showAddIssueModal()">➕ Dodaj zgłoszenie</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="issuesTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tytuł</th>
+                                <th>Użytkownik</th>
+                                <th>Status</th>
+                                <th>Priorytet</th>
+                                <th>Data utworzenia</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Issues will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <h1>📈 Zaawansowana analityka</h1>
+                    <div class="section-actions">
+                        <button class="btn btn-secondary" onclick="loadAdvancedStats()">🔄 Odśwież statystyki</button>
+                    </div>
+                </div>
+                
+                <div id="chartsGrid" class="charts-grid">
+                    <!-- Charts will be populated here -->
+                </div>
+            </section>
+
+            <!-- Backups Section -->
+            <section id="backups-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <h1>💾 Kopie zapasowe bazy danych</h1>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" id="createBackupBtn" onclick="createBackup()">➕ Utwórz backup</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="backupsTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nazwa pliku</th>
+                                <th>Rozmiar</th>
+                                <th>Data utworzenia</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Backups will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Activity Logs Section -->
+            <section id="activity-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <h1>📝 Logi aktywności adminów</h1>
+                    <div class="section-actions">
+                        <button class="btn btn-danger" onclick="clearActivityLogs()">🗑️ Wyczyść stare logi</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="activityLogsTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data i czas</th>
+                                <th>Administrator</th>
+                                <th>Akcja</th>
+                                <th>Zasób</th>
+                                <th>Opis</th>
+                                <th>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Activity logs will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Application Modal -->
+    <div id="applicationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="applicationModalTitle">Dodaj aplikację</h3>
+                <button class="close" onclick="closeApplicationModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="applicationForm">
+                    <input type="hidden" id="app_id" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="app_name">Nazwa aplikacji *</label>
+                            <input type="text" id="app_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="app_price">Cena *</label>
+                            <input type="number" id="app_price" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="app_currency">Waluta</label>
+                            <select id="app_currency">
+                                <option value="PLN">PLN</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="app_downloader_code">Kod downloadera</label>
+                            <input type="text" id="app_downloader_code">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="app_description">Opis</label>
+                        <textarea id="app_description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="app_panel_url">URL panelu</label>
+                        <input type="url" id="app_panel_url">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="app_is_active" checked> Aktywna
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeApplicationModal()">Anuluj</button>
+                <button class="btn btn-primary" onclick="saveApplication()">Zapisz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="orderModalTitle">Dodaj zamówienie</h3>
+                <button class="close" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <input type="hidden" id="order_id" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="order_user_id">Użytkownik *</label>
+                            <select id="order_user_id" required>
+                                <option value="">Wybierz użytkownika</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="order_application_id">Aplikacja *</label>
+                            <select id="order_application_id" required>
+                                <option value="">Wybierz aplikację</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="order_status">Status</label>
+                            <select id="order_status">
+                                <option value="pending" selected>Oczekujące</option>
+                                <option value="processing">Przetwarzane</option>
+                                <option value="completed">Zakończone</option>
+                                <option value="cancelled">Anulowane</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="order_logo_filename">Nazwa pliku logo</label>
+                            <input type="text" id="order_logo_filename">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="order_notes">Notatki</label>
+                        <textarea id="order_notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeOrderModal()">Anuluj</button>
+                <button class="btn btn-primary" onclick="saveOrder()">Zapisz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edytuj użytkownika</h3>
+                <button class="close" onclick="closeUserModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="user_id" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="user_first_name">Imię</label>
+                            <input type="text" id="user_first_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="user_last_name">Nazwisko</label>
+                            <input type="text" id="user_last_name">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="user_username">Username</label>
+                            <input type="text" id="user_username">
+                        </div>
+                        <div class="form-group">
+                            <label for="user_telegram_id">Telegram ID</label>
+                            <input type="number" id="user_telegram_id" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="user_is_approved"> Zatwierdzony
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="user_is_admin"> Administrator
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeUserModal()">Anuluj</button>
+                <button class="btn btn-primary" onclick="saveUser()">Zapisz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Modal -->
+    <div id="fileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="fileModalTitle">Dodaj plik</h3>
+                <button class="close" onclick="closeFileModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="fileForm">
+                    <input type="hidden" id="file_id" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="file_name">Nazwa pliku *</label>
+                            <input type="text" id="file_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="file_application_name">Nazwa aplikacji</label>
+                            <input type="text" id="file_application_name">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="file_downloader_code">Kod downloadera</label>
+                            <input type="text" id="file_downloader_code">
+                        </div>
+                        <div class="form-group">
+                            <label for="file_type">Typ pliku</label>
+                            <select id="file_type">
+                                <option value="file">Plik</option>
+                                <option value="app">Aplikacja</option>
+                                <option value="document">Dokument</option>
+                                <option value="image">Obraz</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="file_user_id">Użytkownik *</label>
+                            <select id="file_user_id" required>
+                                <option value="">Wybierz użytkownika</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="file_is_active" checked> Aktywny
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="file_url">URL pliku</label>
+                        <input type="url" id="file_url">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeFileModal()">Anuluj</button>
+                <button class="btn btn-primary" onclick="saveFile()">Zapisz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue Modal -->
+    <div id="issueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="issueModalTitle">Dodaj zgłoszenie</h3>
+                <button class="close" onclick="closeIssueModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="issueForm">
+                    <input type="hidden" id="issue_id" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="issue_title">Tytuł zgłoszenia *</label>
+                            <input type="text" id="issue_title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="issue_user_id">Użytkownik *</label>
+                            <select id="issue_user_id" required>
+                                <option value="">Wybierz użytkownika</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="issue_priority">Priorytet</label>
+                            <select id="issue_priority">
+                                <option value="low">Niski</option>
+                                <option value="medium" selected>Średni</option>
+                                <option value="high">Wysoki</option>
+                                <option value="urgent">Pilny</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="issue_status">Status</label>
+                            <select id="issue_status">
+                                <option value="open" selected>Otwarte</option>
+                                <option value="in_progress">W trakcie</option>
+                                <option value="resolved">Rozwiązane</option>
+                                <option value="closed">Zamknięte</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="issue_description">Opis zgłoszenia *</label>
+                        <textarea id="issue_description" rows="4" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeIssueModal()">Anuluj</button>
+                <button class="btn btn-primary" onclick="saveIssue()">Zapisz</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/app.js"></script>
+    <script>
+        console.log('Dashboard loaded, checking token...');
+        const token = localStorage.getItem('admin_token');
+        console.log('Token found:', token ? 'YES' : 'NO');
+        if (!token) {
+            console.log('No token found, redirecting to login...');
+        }
+    </script>
+</body>
+</html>

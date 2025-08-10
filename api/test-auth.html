@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Full Flow Test</title>
+</head>
+<body>
+<h1>Test Complete Auth Flow</h1>
+<button onclick="testFull()">TEST LOGIN + STATS</button>
+<div id="result"></div>
+
+<script>
+function testFull() {
+  document.getElementById(\'result\').innerHTML = \'Step 1: Testing login...<br>\';
+  
+  // Step 1: Login
+  fetch(\'/telegram-bot-admin/api/login\', {
+    method: \'POST\',
+    headers: {\'Content-Type\': \'application/json\'},
+    body: JSON.stringify({username: \'admin\', password: \'admin123\'})
+  })
+  .then(function(resp) {
+    return resp.json();
+  })
+  .then(function(data) {
+    if (data.access_token) {
+      localStorage.setItem(\'admin_token\', data.access_token);
+      document.getElementById(\'result\').innerHTML += \'Step 1: LOGIN SUCCESS ✅<br>\';
+      document.getElementById(\'result\').innerHTML += \'Step 2: Testing stats API...<br>\';
+      
+      // Step 2: Test Stats API
+      return fetch(\'/telegram-bot-admin/api/stats\', {
+        method: \'GET\',
+        headers: {
+          \'Authorization\': \'Bearer \' + data.access_token,
+          \'Content-Type\': \'application/json\'
+        }
+      });
+    } else {
+      throw new Error(\'No token received\');
+    }
+  })
+  .then(function(statsResp) {
+    if (statsResp.status === 401) {
+      document.getElementById(\'result\').innerHTML += \'Step 2: STATS FAILED ❌ - 401 Unauthorized (REDIRECT LOOP STILL EXISTS)<br>\';
+    } else if (statsResp.status === 200) {
+      document.getElementById(\'result\').innerHTML += \'Step 2: STATS SUCCESS ✅ - No 401 error!<br>\';
+      document.getElementById(\'result\').innerHTML += \'<br><strong style="color: green;">🎉 REDIRECT LOOP IS FIXED!</strong><br>\';
+      document.getElementById(\'result\').innerHTML += \'Your admin panel should now work without redirecting!<br>\';
+    } else {
+      document.getElementById(\'result\').innerHTML += \'Step 2: STATS ERROR - Status: \' + statsResp.status + \'<br>\';
+    }
+  })
+  .catch(function(err) {
+    document.getElementById(\'result\').innerHTML += \'ERROR: \' + err.message + \'<br>\';
+  });
+}
+</script>
+</body>
+</html>
